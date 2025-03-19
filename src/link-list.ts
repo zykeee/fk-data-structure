@@ -100,17 +100,17 @@ export class LinkList<T> {
 	/**
 	 * Swap the positions of two nodes at the specified indices.
 	 */
-	switchNodesByPosition(position1: number, position2: number) {
-		const node1 = this.getNode(position1)
-		const node2 = this.getNode(position2)
-		if (node1 === undefined) {
-			throw new Error(`Found no node at position1 ${position1}!`)
+	switchNodesByPosition(positionA: number, positionB: number) {
+		const nodeA = this.getNode(positionA)
+		const nodeB = this.getNode(positionB)
+		if (nodeA === undefined) {
+			throw new Error(`Found no node at position ${positionA}!`)
 		}
-		if (node2 === undefined) {
-			throw new Error(`Found no node at position2 ${position2}!`)
+		if (nodeB === undefined) {
+			throw new Error(`Found no node at position ${positionB}!`)
 		}
-		const tmp = node1.value
-		node1.value = node2.value
-		node2.value = tmp
+		const tmp = nodeA.value
+		nodeA.value = nodeB.value
+		nodeB.value = tmp
 	}
 }
