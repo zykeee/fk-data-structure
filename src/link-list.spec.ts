@@ -93,4 +93,9 @@ describe("Switch nodes", () => {
 		ls.switchNodesByPosition(2, 3)
 		expect(ls.values()).toEqual([1, 2, 4, 3, 5, 6])
 	})
+	test("Switch out of range", () => {
+		const ls = new LinkList([1, 2, 3, 4, 5, 6])
+		expect(() => ls.switchNodesByPosition(2, 10)).toThrow()
+		expect(() => ls.switchNodesByPosition(10, 2)).toThrow()
+	})
 })
