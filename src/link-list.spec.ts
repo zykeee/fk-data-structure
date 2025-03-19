@@ -79,3 +79,18 @@ describe("Get node ", () => {
 		expect(ls.getNode(-1, "desc")?.value).toBeUndefined()
 	})
 })
+
+describe("Switch nodes", () => {
+	test("Switch head and tail", () => {
+		const ls = new LinkList([1, 2, 3, 4])
+		ls.switchNodesByPosition(0, 3)
+		expect(ls.values()).toEqual([4, 2, 3, 1])
+		expect(ls.head?.value).toEqual(4)
+		expect(ls.tail?.value).toEqual(1)
+	})
+	test("Switch in middle", () => {
+		const ls = new LinkList([1, 2, 3, 4, 5, 6])
+		ls.switchNodesByPosition(2, 3)
+		expect(ls.values()).toEqual([1, 2, 4, 3, 5, 6])
+	})
+})

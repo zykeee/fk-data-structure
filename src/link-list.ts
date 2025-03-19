@@ -1,9 +1,13 @@
-import { consoleDivider } from "./utils/console"
 import { styleText } from "node:util"
+import { consoleDivider } from "./utils/console"
 import { Sequence } from "./utils/types"
 
 export class ListNode<T> {
-	constructor(public value: T, public pre?: ListNode<T>, public next?: ListNode<T>) {}
+	constructor(
+		public value: T,
+		public pre?: ListNode<T>,
+		public next?: ListNode<T>
+	) {}
 }
 
 /**
@@ -54,23 +58,24 @@ export class LinkList<T> {
 
 	/**
 	 * Retrieve all nodes from this linked list, noting that the nodes are not guaranteed to be sorted.
+	 * @param fromTail Get nodes from the tail if it's enabled
 	 */
-	getNodes(sequence: Sequence = "asc") {
+	getNodes(fromTail: boolean = false) {
 		const result = []
-		if (sequence === "asc") {
+		if (fromTail) {
+			let curr = this.tail
+			while (curr) {
+				result.push(curr)
+				curr = curr.pre
+			}
+		} else {
 			let curr = this.head
 			while (curr) {
 				result.push(curr)
 				curr = curr.next
 			}
 		}
-		if (sequence === "desc") {
-			let curr = this.tail
-			while (curr) {
-				result.push(curr)
-				curr = curr.pre
-			}
-		}
+
 		return result
 	}
 
@@ -83,5 +88,29 @@ export class LinkList<T> {
 		console.log(styleText("bgGreen", " Tail is: "), this.tail)
 		consoleDivider()
 		console.log(styleText("bgGreen", " All nodes are: "), this.getNodes())
+	}
+
+	/**
+	 * Get values of all nodes.
+	 */
+	values() {
+		return this.getNodes().map((node) => node.value)
+	}
+
+	/**
+	 * Swap the positions of two nodes at the specified indices.
+	 */
+	switchNodesByPosition(position1: number, position2: number) {
+		const node1 = this.getNode(position1)
+		const node2 = this.getNode(position2)
+		if (node1 === undefined) {
+			throw new Error(`Found no node at position1 ${position1}!`)
+		}
+		if (node2 === undefined) {
+			throw new Error(`Found no node at position2 ${position2}!`)
+		}
+		const tmp = node1.value
+		node1.value = node2.value
+		node2.value = tmp
 	}
 }
