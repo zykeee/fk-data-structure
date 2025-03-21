@@ -17,14 +17,18 @@ export class ListNode<T> {
  * - Slow finding by index with O(log n)
  */
 export class LinkList<T> {
-	public head?: ListNode<T> = undefined
-	public tail?: ListNode<T> = undefined
+	public head?: ListNode<T>
+	public tail?: ListNode<T>
 	public length = 0
+
 	/**
 	 * Construct a linked list from a provided array,
 	 * with the nodes arranged in the order of the elements in the array.
 	 */
-	constructor(array: T[]) {
+	private constructor() {}
+
+	static fromArray<T>(array: T[]) {
+		const linkList = new LinkList()
 		let curr, pre
 		for (let idx = 0; idx < array.length; idx++) {
 			curr = new ListNode(array[idx])
@@ -32,13 +36,14 @@ export class LinkList<T> {
 			curr.next = array[idx + 1] ? new ListNode(array[idx + 1]) : undefined
 
 			if (pre) pre.next = curr
-			if (idx === 0) this.head = curr
-			if (idx === array.length - 1) this.tail = curr
+			if (idx === 0) linkList.head = curr
+			if (idx === array.length - 1) linkList.tail = curr
 
 			pre = curr
 			curr = curr.next
-			this.length++
+			linkList.length++
 		}
+		return linkList
 	}
 
 	/**
