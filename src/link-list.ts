@@ -1,7 +1,7 @@
 import { styleText } from "node:util"
 import { consoleDivider } from "./utils/console"
 import { Sequence } from "./utils/types"
-
+import type { SetNonNullable } from "type-fest"
 type HeadNode<T> = Required<ListNode<T>> & { pre: undefined }
 type TailNode<T> = Required<ListNode<T>> & { next: undefined }
 type MidNode<T> = Required<ListNode<T>>
@@ -30,6 +30,19 @@ export class ListNode<T> {
 	static isMid<T>(node: ListNode<T>): node is MidNode<T> {
 		return node.next !== undefined && node.pre !== undefined
 	}
+
+	static findLastNext<T>(node: ListNode<T>): ListNode<T> {
+		if (node.next) {
+			return ListNode.findLastNext(node.next)
+		}
+		return node
+	}
+	static findFstPre<T>(node: ListNode<T>): ListNode<T> {
+		if (node.pre) {
+			return ListNode.findFstPre(node.pre)
+		}
+		return node
+	}
 }
 
 /**
@@ -46,6 +59,7 @@ export class LinkList<T> {
 	/* -------------------------------------------------------------------------- */
 	/*                             Initialize LinkList                            */
 	/* -------------------------------------------------------------------------- */
+
 	/**
 	 * Construct a linked list from a provided array,
 	 * with the nodes arranged in the order of the elements in the array.
@@ -74,6 +88,7 @@ export class LinkList<T> {
 	/* -------------------------------------------------------------------------- */
 	/*                        Operations Based on Position                        */
 	/* -------------------------------------------------------------------------- */
+
 	/**
 	 * Retrieve the nth node from the start.
 	 */
@@ -109,6 +124,10 @@ export class LinkList<T> {
 	/* -------------------------------------------------------------------------- */
 	/*                          Operations Based on Node                          */
 	/* -------------------------------------------------------------------------- */
+
+	/**
+	 * Delete a node from list. Allows undefined for convenience like  `ls.deleteNode(ls.head)`
+	 */
 	deleteNode(node: ListNode<T> | undefined) {
 		if (node) {
 			if (node.pre) {
@@ -124,9 +143,46 @@ export class LinkList<T> {
 		}
 	}
 
+	appendAtTail(value: T) {
+		const node = new ListNode(value)
+		if (this.isNotEmpty()) {
+			node.pre = this.tail
+			this.tail.next = node
+			this.tail = node
+		} else {
+			this.head = node
+			this.tail = node
+		}
+	}
+
+	appendAtHead(value: T) {
+		const node = new ListNode(value)
+		if (this.isNotEmpty()) {
+			node.next = this.head
+			this.head.pre = node
+			this.head = node
+		} else {
+			this.head = node
+			this.tail = node
+		}
+	}
+
+	pop() {
+		const value = this.tail?.value
+		this.deleteNode(this.tail)
+		return value
+	}
+
+	shift() {
+		const value = this.head?.value
+		this.deleteNode(this.head)
+		return value
+	}
+
 	/* -------------------------------------------------------------------------- */
 	/*                            Visualization Related                           */
 	/* -------------------------------------------------------------------------- */
+
 	/**
 	 * Retrieve all nodes from this linked list, noting that the nodes are not guaranteed to be sorted.
 	 * @param fromTail Get nodes from the tail if it's enabled
@@ -171,6 +227,10 @@ export class LinkList<T> {
 	/* -------------------------------------------------------------------------- */
 	/*                                 Collection API                             */
 	/* -------------------------------------------------------------------------- */
+
+	/**
+	 * Do something for each node.
+	 */
 	forEach(fn: (value: T, node: ListNode<T>) => void) {
 		let curr = this.head
 		while (curr) {
@@ -179,7 +239,17 @@ export class LinkList<T> {
 		}
 	}
 
-	filter(fn: (value: T, node: ListNode<T>) => boolean) {}
+	/**
+	 * Return a new LinkList instance satisfying filter condition.
+	 */
+	filter(condition: (value: T, node: ListNode<T>) => boolean) {}
 
 	map() {}
+
+	/* -------------------------------------------------------------------------- */
+	/*                                 Type Guards                                */
+	/* -------------------------------------------------------------------------- */
+	isNotEmpty<T>(): this is SetNonNullable<LinkList<T>, "head" | "tail"> {
+		return this.length > 0
+	}
 }

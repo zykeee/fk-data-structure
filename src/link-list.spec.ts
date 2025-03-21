@@ -108,40 +108,111 @@ describe("Operations Based on Position", () => {
 })
 
 describe("Operations Based on Node", () => {
-	describe.only("Delete node", () => {
-		test("delete head", () => {
+	describe("Delete node", () => {
+		test("Delete head", () => {
 			const ls = LinkList.fromArray([1, 2, 3])
 			ls.deleteNode(ls.head)
 			expect(ls.values()).toEqual([2, 3])
 		})
-		test("delete head", () => {
+		test("Delete tail", () => {
 			const ls = LinkList.fromArray([1, 2, 3])
 			ls.deleteNode(ls.tail)
 			expect(ls.values()).toEqual([1, 2])
 		})
-		test("delete node in mid", () => {
+		test("Delete node in mid", () => {
 			const ls = LinkList.fromArray([1, 2, 3])
 			ls.deleteNode(ls.head?.next)
 			expect(ls.values()).toEqual([1, 3])
 		})
-		test("delete multi in sequence", () => {
+		test("Delete multi in sequence", () => {
 			const ls = LinkList.fromArray([1, 2, 3])
 			ls.deleteNode(ls.head)
 			ls.deleteNode(ls.head)
 			expect(ls.values()).toEqual([3])
 		})
-		test("delete multi in random order", () => {
+		test("Delete multi in random order", () => {
 			const ls = LinkList.fromArray([1, 2, 3, 4, 5])
 			ls.deleteNode(ls.head)
 			ls.deleteNode(ls.head?.next)
 			expect(ls.values()).toEqual([2, 4, 5])
 		})
-		test("delete till it's empty", () => {
+		test("Delete till it's empty", () => {
 			const ls = LinkList.fromArray([1, 2, 3])
 			ls.deleteNode(ls.head)
 			ls.deleteNode(ls.head)
 			ls.deleteNode(ls.head)
 			expect(ls.values()).toEqual([])
+		})
+	})
+
+	describe("Append node at head", () => {
+		test("Append to empty", () => {
+			const ls = LinkList.fromArray<number>([])
+			ls.appendAtHead(1)
+			expect(ls.values()).toEqual([1])
+		})
+		test("Append to one", () => {
+			const ls = LinkList.fromArray([2])
+			ls.appendAtHead(1)
+			expect(ls.values()).toEqual([1, 2])
+		})
+		test("Append to multi", () => {
+			const ls = LinkList.fromArray([0, 2, 3])
+			ls.appendAtHead(1)
+			expect(ls.values()).toEqual([1, 0, 2, 3])
+		})
+	})
+
+	describe("Append node at tail", () => {
+		test("Append to empty", () => {
+			const ls = LinkList.fromArray<number>([])
+			ls.appendAtTail(1)
+			expect(ls.values()).toEqual([1])
+		})
+		test("Append to one", () => {
+			const ls = LinkList.fromArray([2])
+			ls.appendAtTail(1)
+			expect(ls.values()).toEqual([2, 1])
+		})
+		test("Append to multi", () => {
+			const ls = LinkList.fromArray([0, 2, 3])
+			ls.appendAtTail(1)
+			expect(ls.values()).toEqual([0, 2, 3, 1])
+		})
+	})
+
+	describe("Shift", () => {
+		test("Shift from empty", () => {
+			const ls = LinkList.fromArray([])
+			expect(ls.shift()).toBeUndefined()
+			expect(ls.values()).toEqual([])
+		})
+		test("Shift from one", () => {
+			const ls = LinkList.fromArray([1])
+			expect(ls.shift()).toEqual(1)
+			expect(ls.values()).toEqual([])
+		})
+		test("Shift from multi", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4])
+			expect(ls.shift()).toEqual(1)
+			expect(ls.values()).toEqual([2, 3, 4])
+		})
+	})
+	describe("Pop", () => {
+		test("Pop from empty", () => {
+			const ls = LinkList.fromArray([])
+			expect(ls.pop()).toBeUndefined()
+			expect(ls.values()).toEqual([])
+		})
+		test("Pop from one", () => {
+			const ls = LinkList.fromArray([1])
+			expect(ls.pop()).toEqual(1)
+			expect(ls.values()).toEqual([])
+		})
+		test("Pop from multi", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4])
+			expect(ls.pop()).toEqual(4)
+			expect(ls.values()).toEqual([1, 2, 3])
 		})
 	})
 })
