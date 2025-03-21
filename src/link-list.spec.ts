@@ -55,28 +55,28 @@ describe("Get length", () => {
 describe("Get node ", () => {
 	test("Get from empty", () => {
 		const ls = LinkList.fromArray([])
-		expect(ls.getNode(0)).toBeUndefined()
-		expect(ls.getNode(0, "desc")).toBeUndefined()
+		expect(ls.getNodeByPosition(0)).toBeUndefined()
+		expect(ls.getNodeByPosition(0, "desc")).toBeUndefined()
 	})
 	test("Get from one", () => {
 		const ls = LinkList.fromArray([1])
-		expect(ls.getNode(0)?.value).toEqual(1)
-		expect(ls.getNode(0, "desc")?.value).toEqual(1)
+		expect(ls.getNodeByPosition(0)?.value).toEqual(1)
+		expect(ls.getNodeByPosition(0, "desc")?.value).toEqual(1)
 	})
 	test("Get from multi", () => {
 		const ls = LinkList.fromArray([1, 2, 3, 4, 5])
-		expect(ls.getNode(3)?.value).toEqual(4)
-		expect(ls.getNode(3, "desc")?.value).toEqual(2)
+		expect(ls.getNodeByPosition(3)?.value).toEqual(4)
+		expect(ls.getNodeByPosition(3, "desc")?.value).toEqual(2)
 	})
 	test("Get from multi out of range", () => {
 		const ls = LinkList.fromArray([1, 2, 3, 4, 5])
-		expect(ls.getNode(10)?.value).toBeUndefined()
-		expect(ls.getNode(10, "desc")?.value).toBeUndefined()
+		expect(ls.getNodeByPosition(10)?.value).toBeUndefined()
+		expect(ls.getNodeByPosition(10, "desc")?.value).toBeUndefined()
 	})
 	test("Get from multi with invalid negative position", () => {
 		const ls = LinkList.fromArray([1, 2, 3, 4, 5])
-		expect(ls.getNode(-1)?.value).toBeUndefined()
-		expect(ls.getNode(-1, "desc")?.value).toBeUndefined()
+		expect(ls.getNodeByPosition(-1)?.value).toBeUndefined()
+		expect(ls.getNodeByPosition(-1, "desc")?.value).toBeUndefined()
 	})
 })
 
@@ -97,5 +97,20 @@ describe("Switch nodes", () => {
 		const ls = LinkList.fromArray([1, 2, 3, 4, 5, 6])
 		expect(() => ls.switchNodesByPosition(2, 10)).toThrow()
 		expect(() => ls.switchNodesByPosition(10, 2)).toThrow()
+	})
+})
+
+describe.only("Collection API", () => {
+	test("For each", () => {
+		let loopCount = 0
+		const checkArray: number[] = []
+
+		LinkList.fromArray([1, 2, 3, 4, 5]).forEach((v, node) => {
+			expect(v).toEqual(node.value)
+			checkArray.push(v)
+			loopCount++
+		})
+		expect(loopCount).toEqual(5)
+		expect(checkArray).toEqual([1, 2, 3, 4, 5])
 	})
 })

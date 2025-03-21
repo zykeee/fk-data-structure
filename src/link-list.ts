@@ -28,7 +28,7 @@ export class LinkList<T> {
 	private constructor() {}
 
 	static fromArray<T>(array: T[]) {
-		const linkList = new LinkList()
+		const linkList = new LinkList<T>()
 		let curr, pre
 		for (let idx = 0; idx < array.length; idx++) {
 			curr = new ListNode(array[idx])
@@ -49,7 +49,7 @@ export class LinkList<T> {
 	/**
 	 * Retrieve the nth node from the start.
 	 */
-	getNode(position: number, sequence: Sequence = "asc") {
+	getNodeByPosition(position: number, sequence: Sequence = "asc") {
 		if (position < 0 || position > this.length) {
 			return undefined
 		}
@@ -106,8 +106,8 @@ export class LinkList<T> {
 	 * Swap the positions of two nodes at the specified indices.
 	 */
 	switchNodesByPosition(positionA: number, positionB: number) {
-		const nodeA = this.getNode(positionA)
-		const nodeB = this.getNode(positionB)
+		const nodeA = this.getNodeByPosition(positionA)
+		const nodeB = this.getNodeByPosition(positionB)
 		if (nodeA === undefined) {
 			throw new Error(`Found no node at position ${positionA}!`)
 		}
@@ -118,4 +118,19 @@ export class LinkList<T> {
 		nodeA.value = nodeB.value
 		nodeB.value = tmp
 	}
+
+	/* -------------------------------------------------------------------------- */
+	/*                                 Collection API                             */
+	/* -------------------------------------------------------------------------- */
+	forEach(fn: (value: T, node: ListNode<T>) => void) {
+		let curr = this.head
+		while (curr) {
+			fn(curr.value, curr)
+			curr = curr.next
+		}
+	}
+
+	filter(fn: (value: T, node: ListNode<T>) => boolean) {}
+
+	map() {}
 }
