@@ -1,6 +1,9 @@
 import { LinkList, ListNode } from "./link-list"
 
-describe("Create link list", () => {
+/* -------------------------------------------------------------------------- */
+/*                                    Basic                                   */
+/* -------------------------------------------------------------------------- */
+describe("Initialize LinkList", () => {
 	test("Create empty", () => {
 		const ls = LinkList.fromArray([])
 		expect(ls.head).toBeUndefined()
@@ -52,55 +55,98 @@ describe("Get length", () => {
 	})
 })
 
-describe("Get node ", () => {
-	test("Get from empty", () => {
-		const ls = LinkList.fromArray([])
-		expect(ls.getNodeByPosition(0)).toBeUndefined()
-		expect(ls.getNodeByPosition(0, "desc")).toBeUndefined()
+/* -------------------------------------------------------------------------- */
+/*                                 Operations                                 */
+/* -------------------------------------------------------------------------- */
+describe("Operations Based on Position", () => {
+	describe("Get node", () => {
+		test("Get from empty", () => {
+			const ls = LinkList.fromArray([])
+			expect(ls.getNodeByPosition(0)).toBeUndefined()
+			expect(ls.getNodeByPosition(0, "desc")).toBeUndefined()
+		})
+		test("Get from one", () => {
+			const ls = LinkList.fromArray([1])
+			expect(ls.getNodeByPosition(0)?.value).toEqual(1)
+			expect(ls.getNodeByPosition(0, "desc")?.value).toEqual(1)
+		})
+		test("Get from multi", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4, 5])
+			expect(ls.getNodeByPosition(3)?.value).toEqual(4)
+			expect(ls.getNodeByPosition(3, "desc")?.value).toEqual(2)
+		})
+		test("Get from multi out of range", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4, 5])
+			expect(ls.getNodeByPosition(10)?.value).toBeUndefined()
+			expect(ls.getNodeByPosition(10, "desc")?.value).toBeUndefined()
+		})
+		test("Get from multi with invalid negative position", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4, 5])
+			expect(ls.getNodeByPosition(-1)?.value).toBeUndefined()
+			expect(ls.getNodeByPosition(-1, "desc")?.value).toBeUndefined()
+		})
 	})
-	test("Get from one", () => {
-		const ls = LinkList.fromArray([1])
-		expect(ls.getNodeByPosition(0)?.value).toEqual(1)
-		expect(ls.getNodeByPosition(0, "desc")?.value).toEqual(1)
-	})
-	test("Get from multi", () => {
-		const ls = LinkList.fromArray([1, 2, 3, 4, 5])
-		expect(ls.getNodeByPosition(3)?.value).toEqual(4)
-		expect(ls.getNodeByPosition(3, "desc")?.value).toEqual(2)
-	})
-	test("Get from multi out of range", () => {
-		const ls = LinkList.fromArray([1, 2, 3, 4, 5])
-		expect(ls.getNodeByPosition(10)?.value).toBeUndefined()
-		expect(ls.getNodeByPosition(10, "desc")?.value).toBeUndefined()
-	})
-	test("Get from multi with invalid negative position", () => {
-		const ls = LinkList.fromArray([1, 2, 3, 4, 5])
-		expect(ls.getNodeByPosition(-1)?.value).toBeUndefined()
-		expect(ls.getNodeByPosition(-1, "desc")?.value).toBeUndefined()
+	describe("Switch node", () => {
+		test("Switch head and tail", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4])
+			ls.switchNodesByPosition(0, 3)
+			expect(ls.values()).toEqual([4, 2, 3, 1])
+			expect(ls.head?.value).toEqual(4)
+			expect(ls.tail?.value).toEqual(1)
+		})
+		test("Switch in middle", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4, 5, 6])
+			ls.switchNodesByPosition(2, 3)
+			expect(ls.values()).toEqual([1, 2, 4, 3, 5, 6])
+		})
+		test("Switch out of range", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4, 5, 6])
+			expect(() => ls.switchNodesByPosition(2, 10)).toThrow()
+			expect(() => ls.switchNodesByPosition(10, 2)).toThrow()
+		})
 	})
 })
 
-describe("Switch nodes", () => {
-	test("Switch head and tail", () => {
-		const ls = LinkList.fromArray([1, 2, 3, 4])
-		ls.switchNodesByPosition(0, 3)
-		expect(ls.values()).toEqual([4, 2, 3, 1])
-		expect(ls.head?.value).toEqual(4)
-		expect(ls.tail?.value).toEqual(1)
-	})
-	test("Switch in middle", () => {
-		const ls = LinkList.fromArray([1, 2, 3, 4, 5, 6])
-		ls.switchNodesByPosition(2, 3)
-		expect(ls.values()).toEqual([1, 2, 4, 3, 5, 6])
-	})
-	test("Switch out of range", () => {
-		const ls = LinkList.fromArray([1, 2, 3, 4, 5, 6])
-		expect(() => ls.switchNodesByPosition(2, 10)).toThrow()
-		expect(() => ls.switchNodesByPosition(10, 2)).toThrow()
+describe("Operations Based on Node", () => {
+	describe.only("Delete node", () => {
+		test("delete head", () => {
+			const ls = LinkList.fromArray([1, 2, 3])
+			ls.deleteNode(ls.head)
+			expect(ls.values()).toEqual([2, 3])
+		})
+		test("delete head", () => {
+			const ls = LinkList.fromArray([1, 2, 3])
+			ls.deleteNode(ls.tail)
+			expect(ls.values()).toEqual([1, 2])
+		})
+		test("delete node in mid", () => {
+			const ls = LinkList.fromArray([1, 2, 3])
+			ls.deleteNode(ls.head?.next)
+			expect(ls.values()).toEqual([1, 3])
+		})
+		test("delete multi in sequence", () => {
+			const ls = LinkList.fromArray([1, 2, 3])
+			ls.deleteNode(ls.head)
+			ls.deleteNode(ls.head)
+			expect(ls.values()).toEqual([3])
+		})
+		test("delete multi in random order", () => {
+			const ls = LinkList.fromArray([1, 2, 3, 4, 5])
+			ls.deleteNode(ls.head)
+			ls.deleteNode(ls.head?.next)
+			expect(ls.values()).toEqual([2, 4, 5])
+		})
+		test("delete till it's empty", () => {
+			const ls = LinkList.fromArray([1, 2, 3])
+			ls.deleteNode(ls.head)
+			ls.deleteNode(ls.head)
+			ls.deleteNode(ls.head)
+			expect(ls.values()).toEqual([])
+		})
 	})
 })
 
-describe.only("Collection API", () => {
+describe("Collection API", () => {
 	test("For each", () => {
 		let loopCount = 0
 		const checkArray: number[] = []

@@ -2,12 +2,34 @@ import { styleText } from "node:util"
 import { consoleDivider } from "./utils/console"
 import { Sequence } from "./utils/types"
 
+type HeadNode<T> = Required<ListNode<T>> & { pre: undefined }
+type TailNode<T> = Required<ListNode<T>> & { next: undefined }
+type MidNode<T> = Required<ListNode<T>>
 export class ListNode<T> {
 	constructor(
 		public value: T,
 		public pre?: ListNode<T>,
 		public next?: ListNode<T>
 	) {}
+
+	appendPreNode(node: ListNode<T>) {
+		this.pre = node
+	}
+
+	appendNextNode(node: ListNode<T>) {
+		this.next = node
+	}
+
+	static isHead<T>(node: ListNode<T>): node is HeadNode<T> {
+		return node.pre === undefined
+	}
+
+	static isTail<T>(node: ListNode<T>): node is TailNode<T> {
+		return node.next === undefined
+	}
+	static isMid<T>(node: ListNode<T>): node is MidNode<T> {
+		return node.next !== undefined && node.pre !== undefined
+	}
 }
 
 /**
@@ -17,10 +39,13 @@ export class ListNode<T> {
  * - Slow finding by index with O(log n)
  */
 export class LinkList<T> {
-	public head?: ListNode<T>
-	public tail?: ListNode<T>
+	public head: ListNode<T> | undefined
+	public tail: ListNode<T> | undefined
 	public length = 0
 
+	/* -------------------------------------------------------------------------- */
+	/*                             Initialize LinkList                            */
+	/* -------------------------------------------------------------------------- */
 	/**
 	 * Construct a linked list from a provided array,
 	 * with the nodes arranged in the order of the elements in the array.
@@ -46,6 +71,9 @@ export class LinkList<T> {
 		return linkList
 	}
 
+	/* -------------------------------------------------------------------------- */
+	/*                        Operations Based on Position                        */
+	/* -------------------------------------------------------------------------- */
 	/**
 	 * Retrieve the nth node from the start.
 	 */
@@ -61,6 +89,44 @@ export class LinkList<T> {
 		return curr
 	}
 
+	/**
+	 * Swap the positions of two nodes at the specified indices.
+	 */
+	switchNodesByPosition(positionA: number, positionB: number) {
+		const nodeA = this.getNodeByPosition(positionA)
+		const nodeB = this.getNodeByPosition(positionB)
+		if (nodeA === undefined) {
+			throw new Error(`Found no node at position ${positionA}!`)
+		}
+		if (nodeB === undefined) {
+			throw new Error(`Found no node at position ${positionB}!`)
+		}
+		const tmp = nodeA.value
+		nodeA.value = nodeB.value
+		nodeB.value = tmp
+	}
+
+	/* -------------------------------------------------------------------------- */
+	/*                          Operations Based on Node                          */
+	/* -------------------------------------------------------------------------- */
+	deleteNode(node: ListNode<T> | undefined) {
+		if (node) {
+			if (node.pre) {
+				node.pre.next = node.next
+			} else {
+				this.head = node.next
+			}
+			if (node.next) {
+				node.next.pre = node.pre
+			} else {
+				this.tail = node.pre
+			}
+		}
+	}
+
+	/* -------------------------------------------------------------------------- */
+	/*                            Visualization Related                           */
+	/* -------------------------------------------------------------------------- */
 	/**
 	 * Retrieve all nodes from this linked list, noting that the nodes are not guaranteed to be sorted.
 	 * @param fromTail Get nodes from the tail if it's enabled
@@ -100,23 +166,6 @@ export class LinkList<T> {
 	 */
 	values() {
 		return this.getNodes().map((node) => node.value)
-	}
-
-	/**
-	 * Swap the positions of two nodes at the specified indices.
-	 */
-	switchNodesByPosition(positionA: number, positionB: number) {
-		const nodeA = this.getNodeByPosition(positionA)
-		const nodeB = this.getNodeByPosition(positionB)
-		if (nodeA === undefined) {
-			throw new Error(`Found no node at position ${positionA}!`)
-		}
-		if (nodeB === undefined) {
-			throw new Error(`Found no node at position ${positionB}!`)
-		}
-		const tmp = nodeA.value
-		nodeA.value = nodeB.value
-		nodeB.value = tmp
 	}
 
 	/* -------------------------------------------------------------------------- */
